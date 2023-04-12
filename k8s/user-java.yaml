@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-java-deployment
+  namespace: api
+  labels:
+    app: user-java
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: user-java
+  template:
+    metadata:
+      labels:
+        app: user-java
+    spec:
+      containers:
+      - name: user-java
+        image: registryvba6423.azurecr.io/tripinsights/user-java:1.0
+        ports:
+        - containerPort: 80
+        env:
+        - name: SQL_USER
+          value: sqladminvBa6423
+        - name: SQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: sqlsecret
+              key: password
+        - name: SQL_SERVER
+          value: sqlservervba6423.database.windows.net
+        - name: OPENAPI_DOCS_URI
+          value: http://localhost
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-java-service
+  namespace: api
+  labels:
+    app: user-java
+spec:
+  selector:
+    app: user-java
+  ports:
+  - port: 80
+    protocol: TCP
+  type: ClusterIP
