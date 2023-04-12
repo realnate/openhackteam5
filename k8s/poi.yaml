@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: poi-deployment
+  namespace: api
+  labels:
+    app: poi
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: poi
+  template:
+    metadata:
+      labels:
+        app: poi
+    spec:
+      containers:
+      - name: poi
+        image: registryvba6423.azurecr.io/tripinsights/poi:1.0
+        ports:
+        - containerPort: 80
+        env:
+        - name: SQL_USER
+          value: sqladminvBa6423
+        - name: SQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: sqlsecret
+              key: password
+        - name: SQL_SERVER
+          value: sqlservervba6423.database.windows.net
+        - name: OPENAPI_DOCS_URI
+          value: http://localhost
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: poi
+  namespace: api
+  labels:
+    app: poi
+spec:
+  selector:
+    app: poi
+  ports:
+  - port: 80
+    protocol: TCP
+  type: ClusterIP
