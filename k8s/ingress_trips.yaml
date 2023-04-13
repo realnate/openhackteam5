@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: trips-ingress
+  namespace: api
+#  annotations:
+#    nginx.ingress.kubernetes.io/rewrite-target: /api/trips
+spec:
+  ingressClassName: nginx
+  rules:
+  - http:
+      paths:
+      - path: /api/trips
+        pathType: Prefix
+        backend:
+          service:
+            name: trips-api-service
+            port:
+              number: 80

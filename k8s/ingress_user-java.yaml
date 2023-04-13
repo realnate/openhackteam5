@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: user-java
+  namespace: api
+#  annotations:
+#    nginx.ingress.kubernetes.io/rewrite-target: /api/user-java
+spec:
+  ingressClassName: nginx
+  rules:
+  - http:
+      paths:
+      - path: /api/user-java
+        pathType: Prefix
+        backend:
+          service:
+            name: user-java-service
+            port:
+              number: 80
